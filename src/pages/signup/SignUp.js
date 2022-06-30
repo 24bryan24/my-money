@@ -24,7 +24,7 @@ export default function SignUp() {
     // history.push('/')
   }
 
-  console.log(username, password)
+  // console.log(username, password)
 
   return (
     <form className={styles['signup-form']} onSubmit={handleSubmit}>

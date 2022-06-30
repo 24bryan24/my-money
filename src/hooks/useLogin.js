@@ -3,28 +3,25 @@ import { authReducer } from '../context/AuthContext'
 import { authorizeProject } from '../firebase/config'
 import { useAuthContext } from './useAuthContext'
 
-export const useSignUp = () => {
+export const useLogin = () => {
     const [isCancelled, setIsCancelled] = useState(false)
     const [error, setError] = useState(null)
     const [isPending, setIsPending] = useState(false)
-    const { create } = useAuthContext()
+    const { login } = useAuthContext()
 
-    const signup = async (username, password, name) => {
+    const logMeIn = async (username, password) => {
         setError(null)
         setIsPending(true)
         try {
             // sign up user
-            const res = await authorizeProject.createUserWithEmailAndPassword(username, password)
+            const res = await authorizeProject.signInWithEmailAndPassword(username, password)
 
             if(!res) {
                 throw new Error('Could not complete new sign up')
             }
-            
-            // add display name to user
-            await res.user.updateProfile({ displayName: name })
 
             // dispatch login action
-            create(res.user)
+            login(res.user)
 
             // update state
             if(!isCancelled) {
@@ -45,5 +42,5 @@ export const useSignUp = () => {
              return () => setIsCancelled(true)
           }, [])
     
-    return { error, isPending, signup }
+    return { error, isPending, logMeIn }
 }
