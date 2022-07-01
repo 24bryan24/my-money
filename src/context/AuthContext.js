@@ -26,7 +26,7 @@ export function AuthProvider({ children }) {
 
     const [state, dispatch] = useReducer(authReducer, {
         user: null,
-        isLoggedIn: false,
+        isLoggedIn: true,
         name: null,
         email: null,
         password: null,
