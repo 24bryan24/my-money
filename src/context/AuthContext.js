@@ -1,22 +1,33 @@
-import { createContext, useReducer } from 'react'
+import { createContext, useEffect, useReducer } from 'react'
+import { authorizeProject } from '../firebase/config'
 
 export const AuthContext = createContext()
 
 const OPTIONS = {
     LOGIN: 'login',
     LOGOUT: 'logout',
-    CREATE: 'create'
+    CREATE: 'create',
+    CHANGENAME: 'changename',
+    CHANGECOPYNAME: 'changecopyname',
+    AUTHISREADY: 'authisready'
 }
 
 export const authReducer = (state, action) => {
     switch(action.type) {
         case OPTIONS.LOGIN:
-            return {...state, user: action.payload, name: action.payload.displayName, email: action.payload.email, isLoggedIn: true, isFirstTime: false}
+            return {...state, user: action.payload, name: action.payload.displayName, email: action.payload.email, isFirstTime: false}
         case OPTIONS.LOGOUT:
-            return {...state, user: null, name: null, email: null, isLoggedIn: false, isFirstTime: false}
+            return {...state, user: null, name: null, email: null, isFirstTime: false}
         case OPTIONS.CREATE:
-            return {...state, user: action.payload, name: action.payload.displayName, email: action.payload.email, isLoggedIn: true, isFirstTime: true}
-        case OPTIONS.LOGOUT:
+            return {...state, user: action.payload, name: action.payload.displayName, email: action.payload.email, isFirstTime: true}
+        case OPTIONS.TOGGLEPOPUP:
+            return {...state, [action.payload+'PopUpOpen']: !state[action.payload+'PopUpOpen'] }
+        case OPTIONS.CHANGENAME:
+            return {...state, name: action.payload }
+        case OPTIONS.CHANGECOPYNAME:
+            return {...state, copyOfName: action.payload }  
+        case OPTIONS.AUTHISREADY:
+            return {...state, authIsReady: true, user: action.payload }
         default:
             return state
     }
@@ -26,12 +37,22 @@ export function AuthProvider({ children }) {
 
     const [state, dispatch] = useReducer(authReducer, {
         user: null,
-        isLoggedIn: true,
+        authIsReady: false,
         name: null,
         email: null,
         password: null,
-        isFirstTime: false
+        isFirstTime: false,
+        profilePopUpOpen: false,
+        passwordPopUpOpen: false,
+        copyOfName: null
     })
+
+    useEffect(async () => {
+        const unsub = await authorizeProject.onAuthStateChanged(user => {
+            dispatch({ type: OPTIONS.AUTHISREADY, payload: user})
+            unsub()
+});
+  },[])
 
     console.log('AuthContextState:', state)
 
@@ -47,8 +68,20 @@ export function AuthProvider({ children }) {
         dispatch({type: OPTIONS.CREATE, payload: user})
     }
 
+    const togglePopUp = (popup) => {
+        dispatch({type: OPTIONS.TOGGLEPOPUP, payload: popup})
+  }
+
+  const changeName = (name) => {
+        dispatch({type: OPTIONS.CHANGENAME, payload: name})
+  }
+
+  const changeCopyName = (name) => {
+        dispatch({type: OPTIONS.CHANGECOPYNAME, payload: name})
+  }
+
     return (
-    <AuthContext.Provider value={{...state, login, logout, create}}>
+    <AuthContext.Provider value={{...state, login, logout, create, togglePopUp, changeName, changeCopyName}}>
         {children}
     </AuthContext.Provider>
     )

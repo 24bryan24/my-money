@@ -24,18 +24,3 @@
   color: #333;
   text-decoration: none;
 }
-.btn-nav {
-  background: none;
-  border: 2px solid #1f9751;
-  padding: 6px 12px 6px 0px;
-  border-radius: 4px;
-  color: #1f9751;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1em;
-  margin-left: 20px;
-}
-.btn-nav:hover {
-  background: #1f9751;
-  color: #fff;
-}

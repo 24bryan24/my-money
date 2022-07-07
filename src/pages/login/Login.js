@@ -3,16 +3,23 @@ import { useHistory } from 'react-router-dom'
 import styles from './Login.module.css'
 import { firestoreProject } from '../../firebase/config'
 import { useLogin } from '../../hooks/useLogin'
+import PasswordPopUp from '../../components/PasswordPopUp';
+import { useAuthContext } from '../../hooks/useAuthContext'
 
 export default function Login() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
   const history = useHistory()
   const { logMeIn, isPending, error } = useLogin()
+  const { passwordPopUpOpen, togglePopUp } = useAuthContext()
 
   const handleSubmit = async (e) => {
     e.preventDefault()
-    logMeIn(username, password)
+    await logMeIn(username, password)
+    if(!error) {
+      history.push('/')
+    }
+    // console.log(error)
     // await firestoreProject.collection('users').get().then(snapshot => {
     //   if(snapshot.empty) return 'No users currently in the database'
     //   snapshot.docs.forEach(doc => {
@@ -26,7 +33,9 @@ export default function Login() {
     // })
   }
 
-  // console.log(username, password)
+  const handleReset = () => {
+    togglePopUp('password')
+  }
 
   return (
     <form className={styles['login-form']} onSubmit={handleSubmit}>
@@ -53,6 +62,8 @@ export default function Login() {
         </label>
         {isPending ? <button className='btn' disabled >Loading...</button> : <button className='btn'>Login</button>}
         {error && <p>{error}</p>}
+        <button onClick={handleReset}>Reset Password</button>
+        {passwordPopUpOpen && <PasswordPopUp username={username} setUsername={setUsername} />}
     </form>
   )
 }
