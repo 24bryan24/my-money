@@ -1,5 +1,6 @@
 import { createContext, useEffect, useReducer } from 'react'
 import { authorizeProject } from '../firebase/config'
+import defaultProfilePhoto from '../assets/profile-icon.svg'
 
 export const AuthContext = createContext()
 
@@ -9,7 +10,8 @@ const OPTIONS = {
     CREATE: 'create',
     CHANGENAME: 'changename',
     CHANGECOPYNAME: 'changecopyname',
-    AUTHISREADY: 'authisready'
+    AUTHISREADY: 'authisready',
+    CHANGEPROFILEPHOTO: 'changeprofilephoto'
 }
 
 export const authReducer = (state, action) => {
@@ -27,7 +29,9 @@ export const authReducer = (state, action) => {
         case OPTIONS.CHANGECOPYNAME:
             return {...state, copyOfName: action.payload }  
         case OPTIONS.AUTHISREADY:
-            return {...state, authIsReady: true, user: action.payload }
+            return {...state, authIsReady: true, user: action.payload, profilePhotoURL: action.payload.photoURL }
+        case OPTIONS.CHANGEPROFILEPHOTO:
+            return {...state, profilePhotoURL: action.payload }
         default:
             return state
     }
@@ -44,17 +48,18 @@ export function AuthProvider({ children }) {
         isFirstTime: false,
         profilePopUpOpen: false,
         passwordPopUpOpen: false,
-        copyOfName: null
+        copyOfName: null,
+        profilePhotoURL: defaultProfilePhoto
     })
 
     useEffect(async () => {
         const unsub = await authorizeProject.onAuthStateChanged(user => {
             dispatch({ type: OPTIONS.AUTHISREADY, payload: user})
             unsub()
+            console.log('AuthContextState:', user)
 });
   },[])
 
-    console.log('AuthContextState:', state)
 
     const login = (user) => {
         dispatch({type: OPTIONS.LOGIN, payload: user})
@@ -80,8 +85,12 @@ export function AuthProvider({ children }) {
         dispatch({type: OPTIONS.CHANGECOPYNAME, payload: name})
   }
 
+  const changeProfilePhoto = (photoURL) => {
+        dispatch({type: OPTIONS.CHANGEPROFILEPHOTO, payload: photoURL})
+  }
+
     return (
-    <AuthContext.Provider value={{...state, login, logout, create, togglePopUp, changeName, changeCopyName}}>
+    <AuthContext.Provider value={{...state, login, logout, create, togglePopUp, changeName, changeCopyName, changeProfilePhoto}}>
         {children}
     </AuthContext.Provider>
     )

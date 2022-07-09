@@ -9,14 +9,15 @@ import ProfilePopUp from './ProfilePopUp';
 export default function Navbar() {
 
   // const [isDoneRendered, setIsDoneRendered] = useState(false)
-  const { user: isLoggedIn, isFirstTime, name, login, logout, togglePopUp, changeCopyName, authIsReady, profilePopUpOpen } = useAuthContext()
+  const { user, isFirstTime, name, login, logout, togglePopUp, changeCopyName, authIsReady, profilePopUpOpen, profilePhotoURL } = useAuthContext()
   const { logMeOut } = useLogout()
+  const [copyUserData, setCopyUserData] = useState(user)
 
   useEffect(async () => {
     await authorizeProject.onAuthStateChanged(user => {
   if (user) {
     login(user)
-    // console.log(user)
+    // changeProfilePhoto()
   } else {
     logout()
   }
@@ -29,9 +30,9 @@ export default function Navbar() {
   //   setIsDoneRendered(true)
   // }
 
-  console.log(isLoggedIn)
 
   const handleClick = () => {
+      console.log(copyUserData)
       changeCopyName(name)
       togglePopUp('profile')
   }
@@ -41,11 +42,11 @@ export default function Navbar() {
         <ul>
           <li className={styles.title}><Link to='/'>myMoney</Link></li>
           {authIsReady && 
-          (isLoggedIn ?
+          (user ?
           <>
             <p>- - -  {isFirstTime ? 'Hello there, ' : 'Welcome back, '}{name} - - -</p>
             <li><button className='btn' onClick={logMeOut}>Logout</button></li>
-            <button onClick={handleClick}>Edit</button>
+            <img className={styles.profilePic} src={profilePhotoURL} onClick={handleClick} />
           </> :
           <>
             <li><Link to='/login'>Login</Link></li>
@@ -53,7 +54,7 @@ export default function Navbar() {
           </>
           )
           }
-          {profilePopUpOpen && <ProfilePopUp popup='profile' />}
+          {profilePopUpOpen && <ProfilePopUp copyUserData={copyUserData} popup='profile' />}
         </ul>
     </nav>
   )

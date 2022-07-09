@@ -2,7 +2,9 @@ import styles from './ProfilePopUp.module.css'
 import { useState } from 'react'
 import { useAuthContext } from '../hooks/useAuthContext'
 import { useSignUp } from '../hooks/useSignUp'
-import { authorizeProject } from '../firebase/config'
+import { authorizeProject, storageProject } from '../firebase/config'
+import visibilityOn from '../assets/visibilityOn.svg'
+import visibilityOff from '../assets/visibilityOff.svg'
 
 export default function ProfilePopUp() {
 
@@ -10,21 +12,26 @@ export default function ProfilePopUp() {
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')  
   const [error, setError] = useState(null)  
+  const [image, setImage] = useState('')
+  const [visibilityImage, setVisibilityImage] = useState(visibilityOn)
    
 
-  const { togglePopUp, name, changeName, copyOfName, changeCopyName } = useAuthContext()
+  const { user, togglePopUp, name, email, changeName, copyOfName, changeCopyName, profilePhotoURL, changeProfilePhoto } = useAuthContext()
 
   const handleSubmit = (e) => {
     e.preventDefault()
   }
 
   const handleClose = () => {
-    changeName(copyOfName)
+    // const user = authorizeProject.currentUser;
+    changeProfilePhoto(user.photoURL)
+    changeName(user.displayName)
+    window.URL.revokeObjectURL(profilePhotoURL)
     togglePopUp('profile')
   }
 
   const handleNameChange = (name) => {
-    const user = authorizeProject.currentUser;
+    // const user = authorizeProject.currentUser;
     user.updateProfile({
       displayName: name
     }).then(() => {
@@ -38,8 +45,7 @@ export default function ProfilePopUp() {
       }
 
   const handleEmailChange = async (email) => {
-    console.log('handleEmailChange', email)
-    const user = authorizeProject.currentUser;
+    // const user = authorizeProject.currentUser;
     user.updateEmail(email).then(() => {
         console.log('successful')
     }).catch((error) => {
@@ -49,11 +55,10 @@ export default function ProfilePopUp() {
       }
 
   const handlePasswordChange = (password) => {
-        const user = authorizeProject.currentUser;
+        // const user = authorizeProject.currentUser;
         // const newPassword = getASecureRandomPassword();
-        console.log(password)
         user.updatePassword(password).then(() => {
-        // Update successful.
+          console.log('successful')
         }).catch((error) => {
         console.log(error)
         setError(error.message)
@@ -61,16 +66,48 @@ export default function ProfilePopUp() {
         });
         togglePopUp('profile')
     }
-
+    let count = 0
     const toggleVisibilty = () => {
         if(inputType === 'text') {
         setInputType("password")
+        setVisibilityImage(visibilityOn)
         } else {
           setInputType("text")
+          setVisibilityImage(visibilityOff)
         }
     }
 
-    console.log('hello')
+    const handleImageChange = (image) => {
+        if(image) {
+          const uploadTask = storageProject.ref(`images/${image.name}`).put(image);
+          uploadTask.on(
+            "state_changed",
+            snapshot => {},
+            error => {
+              console.log(error)
+            },
+            () => {
+              storageProject
+              .ref('images')
+              .child(image.name)
+              .getDownloadURL()
+              .then(url => {
+                // const user = authorizeProject.currentUser;
+                user.updateProfile({
+                   photoURL: url
+               }).then(() => {
+               // Update successful
+               }).catch((error) => {
+               // An error occurred
+               });
+                changeProfilePhoto(url)
+              });
+        }
+          )
+        togglePopUp('profile')
+    }
+  }
+
 
   return (
     <div className={styles["popup-box"]}>
@@ -81,7 +118,7 @@ export default function ProfilePopUp() {
         <label>
           <span>Name: </span>
           <input 
-              placeholder='Derek Sanders'
+              placeholder={name}
               type='text'
               onChange={(e) => changeName(e.target.value)}
               />
@@ -92,7 +129,7 @@ export default function ProfilePopUp() {
           <span>Email: </span>
           <input 
               value={username}
-              placeholder='example@domain.com'
+              placeholder={email}
               type='email'
               onChange={(e) => setUsername(e.target.value)}
               />
@@ -101,14 +138,29 @@ export default function ProfilePopUp() {
         <br />
         <label>
           <span>Password: </span>
+          <img src={visibilityImage} className={styles.['eye-icon']} onClick={toggleVisibilty} />
           <input 
               value={password}
               placeholder='abc123!$'
               type={inputType}
               onChange={(e) => setPassword(e.target.value)}
               />
-          <button onClick={() => handlePasswordChange(password)} className={styles.btn}>Password</button>
-          <button type='button' onClick={toggleVisibilty} className={styles.btn}>Toggle Visibility</button>
+          <button onClick={() => handlePasswordChange(password)} className={styles.btn}>Change Password</button>
+        </label>
+        <br />
+        <label>
+          <span>Photo: </span>
+          <input
+              type='file'
+              onChange={(e) => {
+                setImage(e.target.files[0])
+                changeProfilePhoto(window.URL.createObjectURL(e.target.files[0]))
+                authorizeProject.onAuthStateChanged(user => {
+                console.log('AuthContextState:', user)
+              })
+                }}
+              />
+          <button onClick={() => handleImageChange(image)} className={styles.btn}>Upload Photo</button>
         </label>
         <br />
         <button onClick={handleClose} className='btn'>Close</button>
