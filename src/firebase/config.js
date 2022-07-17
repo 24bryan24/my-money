@@ -20,4 +20,7 @@ const firestoreProject = firebase.firestore();
 const authorizeProject = firebase.auth();
 const storageProject = firebase.storage();
 
-export { firestoreProject, authorizeProject, storageProject }
+// timestamp
+const timestamp = firebase.firestore.Timestamp
+
+export { firestoreProject, authorizeProject, storageProject, timestamp }

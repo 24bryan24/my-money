@@ -23,7 +23,7 @@ export default function ProfilePopUp() {
   }
 
   const handleClose = () => {
-    // const user = authorizeProject.currentUser;
+    const user = authorizeProject.currentUser;
     changeProfilePhoto(user.photoURL)
     changeName(user.displayName)
     window.URL.revokeObjectURL(profilePhotoURL)
@@ -31,7 +31,7 @@ export default function ProfilePopUp() {
   }
 
   const handleNameChange = (name) => {
-    // const user = authorizeProject.currentUser;
+    const user = authorizeProject.currentUser;
     user.updateProfile({
       displayName: name
     }).then(() => {
@@ -45,7 +45,7 @@ export default function ProfilePopUp() {
       }
 
   const handleEmailChange = async (email) => {
-    // const user = authorizeProject.currentUser;
+    const user = authorizeProject.currentUser;
     user.updateEmail(email).then(() => {
         console.log('successful')
     }).catch((error) => {
@@ -55,7 +55,7 @@ export default function ProfilePopUp() {
       }
 
   const handlePasswordChange = (password) => {
-        // const user = authorizeProject.currentUser;
+        const user = authorizeProject.currentUser;
         // const newPassword = getASecureRandomPassword();
         user.updatePassword(password).then(() => {
           console.log('successful')
@@ -92,7 +92,7 @@ export default function ProfilePopUp() {
               .child(image.name)
               .getDownloadURL()
               .then(url => {
-                // const user = authorizeProject.currentUser;
+                const user = authorizeProject.currentUser;
                 user.updateProfile({
                    photoURL: url
                }).then(() => {

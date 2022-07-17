@@ -56,7 +56,7 @@ export function AuthProvider({ children }) {
         const unsub = await authorizeProject.onAuthStateChanged(user => {
             dispatch({ type: OPTIONS.AUTHISREADY, payload: user})
             unsub()
-            console.log('AuthContextState:', user)
+            console.log('AuthContextState:', user.photoURL, state.profilePhotoURL)
 });
   },[])
 

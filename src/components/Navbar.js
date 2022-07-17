@@ -13,17 +13,17 @@ export default function Navbar() {
   const { logMeOut } = useLogout()
   const [copyUserData, setCopyUserData] = useState(user)
 
-  useEffect(async () => {
-    await authorizeProject.onAuthStateChanged(user => {
-  if (user) {
-    login(user)
-    // changeProfilePhoto()
-  } else {
-    logout()
-  }
-  // setIsDoneRendered(true)
-});
-  },[])
+//   useEffect(async () => {
+//     await authorizeProject.onAuthStateChanged(user => {
+//   if (user) {
+//     login(user)
+//     // changeProfilePhoto()
+//   } else {
+//     logout()
+//   }
+//   // setIsDoneRendered(true)
+// });
+//   },[])
 
   // const handleLogOut = () => {
   //   logMeOut()
