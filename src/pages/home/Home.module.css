@@ -24,30 +24,36 @@ input::-webkit-inner-spin-button {
 .sidebar select {
   display: flex;
   width: 100%;
-  padding: 10px;
+  padding: 7px;
   margin-top: 8px;
   box-sizing: border-box;
   border: 0;
-  border-radius: 12px;
+  border-radius: 4px;
   color: #555;
+  background: white;
+}
+.sidebar input {
   font-size: 1em;
   border-top-style: hidden;
   border-right-style: hidden;
   border-left-style: hidden;
   border-bottom-style: hidden;
-  background-color: white;
+}
+input:focus {
+  outline: none;
+}
+.input img {
+  cursor: pointer;
+  /* right: 10px;
+  top: 10px;
+  position: absolute; */
+  width: 20px;
+  height: 20px;
 }
 /* .sidebar .input {
   position: relative;
 } */
-/* .sidebar img {
-  cursor: pointer;
-  right: 10px;
-  width: 20px;
-  height: 20px;
-  top: 10px;
-  position: absolute; 
-} */
+
 .sidebar label {
   margin: 0 auto 20px;
   display: block;
@@ -87,6 +93,12 @@ input::-webkit-inner-spin-button {
   position: relative;
   overflow: hidden;
   border-left: 4px solid #1f9751;
+  transition: all 0.35s ease-in-out;
+}
+.transactions li:hover {
+  transform: translate(20px);
+  border: 1px solid #fae13e;
+  border-left: 8px solid #fae13e;
 }
 .transactions .name {
   color: #777;
@@ -111,4 +123,20 @@ input::-webkit-inner-spin-button {
   line-height: 0;
   font-size: 0.9em;
   cursor: pointer;
+}
+.inputBtn {
+  display: flex;
+  margin-bottom: 10px;
+}
+.deleteIcon {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+  transition: transform 0.25s ease-in-out;
+}
+.deleteIcon:hover {
+  transform: rotate(1turn) scale(2);
 }

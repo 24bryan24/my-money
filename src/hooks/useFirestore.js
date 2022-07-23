@@ -4,6 +4,7 @@ import { firestoreProject, timestamp } from "../firebase/config";
 const OPTIONS = {
   ISPENDING: "ispending",
   ADDEDDOCUMENT: "addeddocument",
+  DELETEDDOCUMENT: "deletedocument",
   ERROR: "error",
 };
 
@@ -11,7 +12,6 @@ const firestoreReducer = (state, action) => {
   switch (action.type) {
     case OPTIONS.ISPENDING:
       return {
-        ...state,
         isPending: true,
         document: null,
         success: false,
@@ -19,15 +19,20 @@ const firestoreReducer = (state, action) => {
       };
     case OPTIONS.ADDEDDOCUMENT:
       return {
-        ...state,
         isPending: false,
         success: true,
         error: null,
         document: action.payload,
       };
+    case OPTIONS.DELETEDDOCUMENT:
+      return {
+        isPending: false,
+        success: true,
+        error: null,
+        document: null,
+      };
     case OPTIONS.ERROR:
       return {
-        ...state,
         error: action.payload,
         isPending: false,
         document: null,
@@ -78,7 +83,15 @@ export const useFirestore = (collection) => {
 
   // delete a document
   const deleteDocument = async (id) => {
-    if (!isCancelled) {
+    dispatch({ type: OPTIONS.ISPENDING });
+
+    try {
+      await ref.doc(id).delete();
+      dispatchIfNotCancelled({
+        type: OPTIONS.DELETEDDOCUMENT,
+      });
+    } catch (err) {
+      dispatchIfNotCancelled({ type: OPTIONS.ERROR, payload: err.message });
     }
   };
 

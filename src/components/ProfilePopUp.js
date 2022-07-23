@@ -5,6 +5,7 @@ import { useSignUp } from '../hooks/useSignUp'
 import { authorizeProject, storageProject } from '../firebase/config'
 import visibilityOn from '../assets/visibilityOn.svg'
 import visibilityOff from '../assets/visibilityOff.svg'
+import TransactionForm from '../pages/home/TransactionForm'
 
 export default function ProfilePopUp() {
 
@@ -110,7 +111,7 @@ export default function ProfilePopUp() {
 
 
   return (
-    <div className={styles["popup-box"]}>
+  <div className={styles["popup-box"]}>
       <div className={styles.box}>
         <span className={styles["close-icon"]} onClick={handleClose}>x</span>
         <form className={styles['signup-form']} onSubmit={handleSubmit}>
@@ -167,6 +168,7 @@ export default function ProfilePopUp() {
         {error && <p>{error}</p>}
         
     </form>
+    <TransactionForm />
       </div>
     </div>
   )
