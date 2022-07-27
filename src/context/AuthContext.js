@@ -11,6 +11,7 @@ const OPTIONS = {
   CHANGENAME: "changename",
   CHANGECOPYNAME: "changecopyname",
   AUTHISREADY: "authisready",
+  AUTHISNOTREADY: "authisnotready",
   CHANGEPROFILEPHOTO: "changeprofilephoto",
 };
 
@@ -54,8 +55,17 @@ export const authReducer = (state, action) => {
         ...state,
         authIsReady: true,
         user: action.payload,
-        name: action.payload.displayName,
+        name: action.payload.displayName || null,
         profilePhotoURL: action.payload.photoURL || defaultProfilePhoto,
+        cursor: "default",
+      };
+    case OPTIONS.AUTHISNOTREADY:
+      return {
+        ...state,
+        authIsReady: true,
+        user: null,
+        name: null,
+        profilePhotoURL: defaultProfilePhoto,
         cursor: "default",
       };
     case OPTIONS.CHANGEPROFILEPHOTO:
@@ -82,15 +92,21 @@ export function AuthProvider({ children }) {
 
   useEffect(async () => {
     const unsub = await authorizeProject.onAuthStateChanged((user) => {
-      dispatch({ type: OPTIONS.AUTHISREADY, payload: user });
+      if (user) {
+        console.log(user);
+        dispatch({ type: OPTIONS.AUTHISREADY, payload: user });
+      } else {
+        console.log("there is no user");
+        dispatch({ type: OPTIONS.AUTHISNOTREADY });
+      }
       unsub();
-      console.log(
-        "Display Name:",
-        user.displayName,
-        user,
-        user.photoURL,
-        state.profilePhotoURL
-      );
+      // console.log(
+      //   "Display Name:",
+      //   user.displayName,
+      //   user,
+      //   user.photoURL,
+      //   state.profilePhotoURL
+      // );
     });
   }, []);
 

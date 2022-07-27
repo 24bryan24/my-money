@@ -140,3 +140,19 @@ input:focus {
 .deleteIcon:hover {
   transform: rotate(1turn) scale(2);
 }
+.increase {
+  position: absolute;
+  top: 15px;
+  right: 115px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
+.decrease {
+  position: absolute;
+  bottom: 15px;
+  right: 115px;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+}
