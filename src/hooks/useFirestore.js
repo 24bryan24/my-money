@@ -24,6 +24,13 @@ const firestoreReducer = (state, action) => {
         error: null,
         document: action.payload,
       };
+    case OPTIONS.CHANGEDDOCUMENT:
+      return {
+        ...state,
+        isPending: false,
+        success: true,
+        error: null,
+      };
     case OPTIONS.DELETEDDOCUMENT:
       return {
         isPending: false,
@@ -81,6 +88,21 @@ export const useFirestore = (collection) => {
     }
   };
 
+  // change a document
+  const changeDocument = async (id, data) => {
+    dispatch({ type: OPTIONS.ISPENDING });
+
+    try {
+      await ref.doc(id).update({ amount: data });
+      console.log("changed");
+      dispatchIfNotCancelled({
+        type: OPTIONS.CHANGEDDOCUMENT,
+      });
+    } catch (err) {
+      dispatchIfNotCancelled({ type: OPTIONS.ERROR, payload: err.message });
+    }
+  };
+
   // delete a document
   const deleteDocument = async (id) => {
     dispatch({ type: OPTIONS.ISPENDING });
@@ -99,5 +121,5 @@ export const useFirestore = (collection) => {
     return () => setIsCancelled(true);
   }, []);
 
-  return { addDocument, deleteDocument, response };
+  return { addDocument, changeDocument, deleteDocument, response };
 };

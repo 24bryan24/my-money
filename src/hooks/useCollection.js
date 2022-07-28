@@ -26,6 +26,7 @@ export const useCollection = (collection, _query, _orderBy) => {
         if (snapshot.empty) {
           setError(`No ${collection} to load!`);
         } else {
+          // console.log("snapshot", snapshot.docs);
           let results = [];
           snapshot.docs.forEach((doc) => {
             results.push({ id: doc.id, ...doc.data() });
