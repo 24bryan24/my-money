@@ -139,7 +139,7 @@ export default function ProfilePopUp() {
         <br />
         <label>
           <span>Password: </span>
-          <img src={visibilityImage} className={styles.['eye-icon']} onClick={toggleVisibilty} />
+          <img src={visibilityImage} className={styles['eye-icon']} onClick={toggleVisibilty} />
           <input 
               value={password}
               placeholder='abc123!$'
